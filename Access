@@ -1,0 +1,24 @@
+/* Memory management: The strdup() function is used in the C code to copy the string, but there is no check whether the memory allocation is successful, and there is no error handling for releasing the memory. This may cause memory leaks or program crashes.
+ * String processing: Use the strtok() function to split strings, but this function has some limitations, such as not suitable for processing empty fields.
+ * Security: There is no check on string length, which may lead to buffer overflow vulnerability.
+ * Code complexity: The code structure is relatively complex, and the logic is scattered in multiple functions, which reduces readability and maintainability.
+ */
+def match_binary(b1: bytes, b2: bytes, mask: bytes) -> bool:
+    /* compares two binary data bitwise and compares according to the provided mask*/
+    for byte1, byte2, byte_mask in zip(b1, b2, mask):
+        if (byte1 ^ byte2) & byte_mask:
+            return False
+    return True
+
+def make_mask(plen: int, addrlen: int) -> bytes:
+   /* generate a mask based on the provided prefix length and address length*/
+    mask = bytearray(addrlen)
+    w = plen // 8
+    b = plen % 8
+    if w:
+        mask[:w] = b'\xff' * w
+    if w < addrlen:
+        mask[w] = 0xff & (0xff << (8 - b))
+    if w + 1 < addrlen:
+        mask[w + 1:] = b'\x00' * (addrlen - w - 1)
+    return bytes(mask)
