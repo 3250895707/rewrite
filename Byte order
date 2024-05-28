@@ -1,0 +1,33 @@
+/* For byte order processing, only big-endian (MSB-first) order is considered in the code. If little-endian (LSB-first) order is used on some platforms, appropriate modifications are required.
+ * Type casting and pointer manipulation are used in the code, which may lead to some undefined behavior or platform-specific issues. 
+ * For cross-platform code, it is best to use the functions or macros provided by the standard library for byte order processing to ensure the portability and reliability of the code.
+ * Some functions and macros do not have error checking or bounds checking. 
+ * In practical applications, you should consider adding appropriate error handling mechanisms to prevent out-of-bounds access to memory and other potential errors.
+ * The code uses some obsolete compiler macros, such as __i386__, __amd64, etc. 
+ * These macros may no longer be supported or have different names on different compilers and platforms. 
+ * It is recommended to use more general and standard macros to determine the byte ordering characteristics of the platform.
+ * In summary, in order to better handle byte order, it is recommended to use the functions or macros provided by the standard library, 
+ * and perform appropriate error handling and platform compatibility processing according to specific needs.
+*/
+import struct
+
+def is_little_endian():
+    return struct.pack('@I', 0x12345678)[0] == 0x78
+
+def uval(buffer, offset):
+    return struct.unpack_from('>I' if not is_little_endian() else '<I', buffer, offset)[0]
+
+def ival(buffer, offset):
+    return struct.unpack_from('>i' if not is_little_endian() else '<i', buffer, offset)[0]
+
+def sival(buffer, offset, value):
+    struct.pack_into('>i' if not is_little_endian() else '<i', buffer, offset, value)
+
+def ival64(buffer, offset):
+    return struct.unpack_from('>q' if not is_little_endian() else '<q', buffer, offset)[0]
+
+def sival64(buffer, offset, value):
+    struct.pack_into('>q' if not is_little_endian() else '<q', buffer, offset, value)
+
+def cval(buffer, offset):
+    return buffer[offset]
